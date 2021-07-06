@@ -3,16 +3,18 @@ package hello.servlet.basic;
 import java.io.IOException;
 
 import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 @WebServlet(name = "helloServlet", urlPatterns = "/hello")
 public class HelloServlet extends HttpServlet {
 
+    // public service : 톰캣에서 호출
+    // 필요한 몇가지 작업 이후 protected service 호출
     @Override
-    public void service(final ServletRequest request, final ServletResponse response) throws ServletException, IOException {
+    protected void service(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
         System.out.println("HelloServlet.service");
 
         // 다양한 WAS들이 각각 서블릿 표준 스펙을 구현했을 텐데 그 구현체들임
