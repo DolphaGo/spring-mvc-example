@@ -55,8 +55,8 @@ private void cookie(HttpServletResponse response){
     response.addCookie(cookie);
 }
 ```
-![cookie-response.png](cookie-response.png)
-![cookie-request.png](cookie-request.png)
+![cookie-response.png](imgs/cookie-response.png)
+![cookie-request.png](imgs/cookie-request.png)
 
 
 리다이렉트
@@ -72,6 +72,37 @@ private void redirect(final HttpServletResponse response) throws IOException {
    response.sendRedirect("/basic/hello-form.html");
 }
 ```
-![response-redirect.png](response-redirect.png)
+![response-redirect.png](imgs/response-redirect.png)
 
 - HttpStatus Code는 기본적으로 302로, 그리고 Redirect 할 페이지도 지정을 하면 StatusCoded와 Header에 Location 설정하는 것과 동일하다.
+
+---
+
+## HTTP 응답 데이터 - 단순 텍스트, HTML
+- 단순 텍스트 응답
+  - 앞에서 살펴봄 `writer.println("ok")`
+- HTML 응답
+```java
+@WebServlet(name = "responseHtmlServlet", urlPatterns = "/response-html")
+public class ResponseHtmlServlet extends HttpServlet {
+    @Override
+    protected void service(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
+        // Content-Type : text/html;charset=utf-8
+        response.setContentType("text/html");
+        response.setCharacterEncoding("utf-8");
+
+        final PrintWriter writer = response.getWriter();
+        writer.println("<html>");
+        writer.println("<body>");
+        writer.println("<div>안녕?</div>");
+        writer.println("</body>");
+        writer.println("</html>");
+    }
+}
+```
+![response-html.png](response-html.png)
+응답이 text/html이다.
+![response-html-respose.png](response-html-respose.png)
+- HTTP 응답으로 HTML을 반환할 때는 content-type을 "text/html"로 지정해야 한다.
+
+
