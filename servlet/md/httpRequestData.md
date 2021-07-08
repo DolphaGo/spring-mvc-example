@@ -8,6 +8,8 @@
     - Content-type : application/x-www-form-urlencoded
     - 메시지 바디에 쿼리 파라미터 형식으로 전달 username=hello&age=20
     - 예) 회원 가입, 상품 주문, HTML Form 사용
+    - Form 방식에 POST 만 가능하다(HTTP spec)
+        - 스프링은 되는데요? 스프링이 hidden field에 넣어두고, 다른(POST가 아닌) 핸들러에 매핑해주는 것처럼 보이는 것 뿐임.
 3. HTTP message body에 데이터를 직접 담아서 요청
     - HTTP API에서 주로 사용, JSON, XML, TEXT
     - 데이터 형식은 주로 JSON 사용
