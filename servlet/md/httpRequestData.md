@@ -195,3 +195,109 @@ Content-Length: 6
 hello!]
 messageBody = hello!
 ```
+
+
+### HTTP 요청 데이터 - API 메시지 바디 - JSON
+
+- content-type : `application/json`
+- message body : `{ "username" : "hello", "age" : 20}`
+- 결과 : messageBody = `{"username": "hello", "age" : 20}`
+
+JSON은 주로 객체로 받아서 쓴다.
+따라서 파싱할 수 있도록 객체를 하나 생성하자
+
+
+#### JSON 형식 파싱 객체 추가
+```java
+@Getter
+@Setter
+public class HelloData {
+    private String username;
+    private int age;
+}
+```
+
+```java
+@WebServlet(name = "requestBodyJsonServlet", urlPatterns = "/request-body-json")
+public class RequestBodyJsonServlet extends HttpServlet {
+    @Override
+    protected void service(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
+        final ServletInputStream inputStream = request.getInputStream();
+        final String messageBody = StreamUtils.copyToString(inputStream, StandardCharsets.UTF_8);
+        System.out.println("messageBody = " + messageBody);
+    }
+}
+```
+
+- `http://localhost:8080/request-body-json`
+- body = `
+{
+"username" : "hello",
+"age": 20
+}
+`
+- content-type : application/json
+- 결과
+```text
+messageBody = {
+    "username" : "hello",
+    "age": 20
+}
+```
+
+- 이제 이 값을 HelloData로 변환시켜볼 것이다.
+- 스프링은 기본 라이브러리로 jackson을 사용한다.
+
+```java
+@WebServlet(name = "requestBodyJsonServlet", urlPatterns = "/request-body-json")
+public class RequestBodyJsonServlet extends HttpServlet {
+
+    private ObjectMapper objectMapper = new ObjectMapper();
+
+    @Override
+    protected void service(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
+        final ServletInputStream inputStream = request.getInputStream();
+        final String messageBody = StreamUtils.copyToString(inputStream, StandardCharsets.UTF_8);
+        System.out.println("messageBody = " + messageBody);
+
+        final HelloData helloData = objectMapper.readValue(messageBody, HelloData.class);
+
+        System.out.println("helloData.getUsername() = " + helloData.getUsername());
+        System.out.println("helloData.getAge() = " + helloData.getAge());
+
+        response.getWriter().write("ok");
+    }
+}
+```
+출력 결과는 다음과 같다.
+```text
+messageBody = {
+    "username" : "hello",
+    "age": 20
+}
+helloData.getUsername() = hello
+helloData.getAge() = 20
+```
+
+
+참고로 나중에 스프링 MVC를 극한으로 사용하면 다음과 같이 가능하다.
+
+```java
+@WebServlet(name = "requestBodyJsonServlet", urlPatterns = "/request-body-json")
+public class RequestBodyJsonServlet extends HttpServlet {
+    @Override
+    protected void service(HelloData helloData) throws ServletException, IOException {
+        System.out.println("helloData.getUsername() = " + helloData.getUsername());
+        System.out.println("helloData.getAge() = " + helloData.getAge());
+        response.getWriter().write("ok");
+    }
+}
+```
+
+
+> 참고
+- JSON 결과를 파싱해서 사용할 수 있는 자바 객체로 변환하려면 Jackson, Gson 같은 JSON 변환 라이브러리를 추가해서 사용해야 한다.
+- 스프링 부트로 Spring MVC를 선택하면, 기본적으로 Jackson 라이브러리(`ObjectMapper`)를 함께 제공한다.
+- HTML form 데이터도 메시지 바디를 통해 전송되므로 직접 읽을 수 있다. 
+- 하지만 편리한 파라미터 조회 기능인 `request.getParameter(...)`를 이미 제공하기 때문에 파라미터 조회 기능을 사용하면 된다.
+- 즉 x-www-urlencoded로 보내도, `messageBody = username=aaa&age=20` 이렇게 출력이 된다. 이건 쿼리 파라미터 조회를 하면 된다는 소리임
