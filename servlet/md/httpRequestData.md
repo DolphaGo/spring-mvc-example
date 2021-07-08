@@ -155,3 +155,43 @@ HTTP 요청 데이터 - POST HTML Form
     - 이렇게 폼으로 데이터를 전송하는 형식을 `application/x-www-form-urlencoded`라고 한다.
     
 ![postman-post.png](imgs/postman-post.png)
+
+---
+
+## HTTP 요청 데이터 - API 메시지 바디 - 단순 텍스트
+
+HTTP Message body에 데이터를 직접 담아서 요청
+- HTTP API에서 주로 사용, JSON, XML, TEXT
+- 데이터 형식은 주로 JSON을 사용
+- POST, PUT, PATCH
+
+```java
+@WebServlet(name = "requestBodyStringServlet", urlPatterns = "/request-body-string")
+public class RequestBodyStringServlet extends HttpServlet {
+
+    @Override
+    protected void service(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
+        final ServletInputStream inputStream = request.getInputStream(); // 메세지 바디의 내용을 바로 Byte code로 얻어올 수 있다. 이를 String으로 바꿔주자.
+        final String messageBody = StreamUtils.copyToString(inputStream, StandardCharsets.UTF_8);
+
+        System.out.println("messageBody = " + messageBody);
+
+        response.getWriter().write("ok");
+    }
+}
+```
+
+```text
+ Received [POST /request-body-string HTTP/1.1
+Content-Type: text/plain
+User-Agent: PostmanRuntime/7.28.1
+Accept: */*
+Postman-Token: 9e4c6d1d-51df-4bb7-8d39-ccffff410710
+Host: localhost:8080
+Accept-Encoding: gzip, deflate, br
+Connection: keep-alive
+Content-Length: 6
+
+hello!]
+messageBody = hello!
+```
