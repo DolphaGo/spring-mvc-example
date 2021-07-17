@@ -11,7 +11,7 @@
 
 
 프론트 컨트롤러를 등장 두둥
-![front-controller.png](imgs/front-controller.p
+![front-controller.png](imgs/front-controller.png)
 
 #### 프론트 컨트롤러 패턴의 특징
 - 프론트 컨트롤러 서블릿 하나로 클라이언트의 요청을 받음
@@ -417,4 +417,4 @@ public class MyView {
 - 결과적으로 프론트 컨트롤러가 할 일이 많아졌다.
 - 그런데 장점은 뭐냐? 실제 호출하는 컨트롤러가 굉장히 심플하다!
 - 자자, 다시 한번 구조를 상기하자.
-![frontcontrollerV3.png](imgs/frontcontrollerV3.png)
+- ![frontcontrollerV3.png](imgs/frontcontrollerV3.png)
