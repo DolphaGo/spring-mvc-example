@@ -146,3 +146,16 @@ public class FrontControllerServletV1 extends HttpServlet {
 - 구조 개선을 하다보면, `아 이것도 이렇게 바꿀 수 있을 것 같은데?`와 같은 생각이 들기 마련이다.(내가 요새 하고 있는 것이라 너무 공감 중)
 - **한 번 참아야 한다!!!!!!!!!!!!!**
 - 우선 같은 레벨(구조 개선)에 집중하여 구조를 먼저 개선한 뒤, 바뀐 구조에 대해서 동작에 이상이 없으면 그 이후에 리팩토링 및 개선을 하는 것이 옳다.
+
+--- 
+
+## V2 - 이번에는 뷰를 분리해보자
+모든 컨트롤러에서 뷰로 이동하는 부분에 중복이 있고, 깔끔하지 않다.
+
+```java
+String viewPath = "/WEB-INF/views/new-form.jsp";
+RequestDispatcher dispatcher = request.getRequestDispatcher(viewPath);
+dispatcher.forward(request, response);
+```
+이 부분을 깔끔하게 분리하기 위해 별도로 뷰를 처리하는 객체를 만들자.
+![frontcontrollerV2.png](imgs/frontcontrollerV2.png)
