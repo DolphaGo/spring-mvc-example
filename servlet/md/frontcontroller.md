@@ -618,3 +618,149 @@ public interface MyHandlerAdapter {
 - 어댑터는 실제 컨트롤러를 호출하고, 그 결과로 ModelView를 반환해야 한다.
 - 실제 컨트롤러가 ModelView를 반환하지 못하면, 어댑터가 ModelView를 직접 생성해서라도 반환해야 한다.
 - 이전에는 프론트 컨트롤러가 실제 컨트롤러를 호출했지만 이제는 이 어댑터를 통해서 실제 컨트롤러가 호출된다.
+
+
+> 우선, `front-controller/v5/*` 로 들어오는 요청을 한 번 어댑터로 처리해보자.
+
+이번 예제에서는 V3과 V4를 어댑터로 받아와서 처리할 것이다.
+
+어댑터의 규격이 있어야 할 것이다.
+
+```java
+public interface MyHandlerAdapter {
+
+    boolean supports(Object handler);
+
+    ModelView handle(HttpServletRequest request, HttpServletResponse response, Object handler) throws ServletException, IOException;
+}
+```
+
+우선 지원하는 규격인지 판단하는 supports와, 실제 렌더링을 수행하는 handle을 정의했다.
+
+이제 어댑터를 구현해보자.
+
+V3 어댑터
+```java
+public class ControllerV3HandlerAdapter implements MyHandlerAdapter {
+    @Override
+    public boolean supports(final Object handler) {
+        return (handler instanceof ControllerV3);
+    }
+
+    @Override
+    public ModelView handle(final HttpServletRequest request, final HttpServletResponse response, final Object handler) throws ServletException, IOException {
+        final ControllerV3 controller = (ControllerV3) handler;
+
+        final Map<String, String> paramMap = createParamMap(request);
+
+        return controller.process(paramMap);
+    }
+
+    private Map<String, String> createParamMap(final HttpServletRequest request) {
+        Map<String, String> paramMap = new HashMap<>();
+        request.getParameterNames().asIterator()
+               .forEachRemaining(paramName -> paramMap.put(paramName, request.getParameter(paramName)));
+        return paramMap;
+    }
+}
+```
+
+- supports
+  - 일단 지원하기 위해서는 `ControllerV3` 인터페이스 타입인지를 확인해야한다.
+
+- handle
+  - supports에 통과된 핸들러는 ControllerV3 타입으로 캐스팅을 한다.
+  - 기존 V3는 request에 딸려있는 파라미터를 다 받아온 paramMap을 넘겨서, ModelView 객체를 만들어서, ModelView 내의 model에 데이터를 세팅하고, ModelView를 반환하면 이를 받아서 렌더하는 방식이였다.
+```java
+public class MemberListControllerV3 implements ControllerV3 {
+    private MemberRepository memberRepository = MemberRepository.getInstance();
+    
+    @Override
+    public ModelView process(final Map<String, String> paramMap) {
+        final List<Member> members = memberRepository.findAll();
+        final ModelView mv = new ModelView("members");
+        mv.getModel().put("members", members);
+        return mv;
+    }
+}
+```
+  - 현재 어댑터의 리턴을 ModelView로 했으므로, 굉장히 간단하게 모델에 데이터를 담는 방식이다.
+
+
+- V5 컨트롤러는 어떻게 생겨먹으면 될까
+```java
+@WebServlet(name = "frontControllerServletV5", urlPatterns = "/front-controller/v5/*")
+public class FrontControllerServletV5 extends HttpServlet {
+
+    private final Map<String, Object> handlerMappingMap = new HashMap<>();
+    private final List<MyHandlerAdapter> handlerAdapters = new ArrayList<>();
+
+    public FrontControllerServletV5() {
+        initHandlerMappingMap(); // 어떤 요청들을 받을 지 세팅
+        initHandlerAdapters(); // 요청 받은 버전에 대한 어댑터 세팅
+    }
+
+    private void initHandlerMappingMap() {
+        handlerMappingMap.put("/front-controller/v5/v3/members/new-form", new MemberFormControllerV3());
+        handlerMappingMap.put("/front-controller/v5/v3/members/save", new MemberSaveControllerV3());
+        handlerMappingMap.put("/front-controller/v5/v3/members", new MemberListControllerV3());
+
+        // v4 추가
+        handlerMappingMap.put("/front-controller/v5/v4/members/new-form", new MemberFormControllerV4());
+        handlerMappingMap.put("/front-controller/v5/v4/members/save", new MemberSaveControllerV4());
+        handlerMappingMap.put("/front-controller/v5/v4/members", new MemberListControllerV4());
+    }
+
+    private void initHandlerAdapters() {
+        handlerAdapters.add(new ControllerV3HandlerAdapter());
+        handlerAdapters.add(new ControllerV4HandlerAdapter());
+    }
+
+    @Override
+    protected void service(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
+
+        final Object handler = getHandler(request);
+
+        if (handler == null) {
+            response.setStatus(SC_NOT_FOUND);
+            return;
+        }
+
+        final MyHandlerAdapter adapter = handlerAdapters.stream()
+                                                        .filter(a -> a.supports(handler))
+                                                        .findFirst()
+                                                        .orElseThrow(() -> new IllegalArgumentException("handler Adapter를 찾을 수 없습니다. handler = " + handler));
+
+        final ModelView mv = adapter.handle(request, response, handler);
+
+        final String viewName = mv.getViewName();
+        final MyView view = viewResolver(viewName);
+
+        view.render(mv.getModel(), request, response);
+    }
+
+    private MyView viewResolver(final String viewName) {
+        return new MyView("/WEB-INF/views/" + viewName + ".jsp"); // 논리 이름 -> 실제 물리 이름
+    }
+
+    private Object getHandler(final HttpServletRequest request) {
+        final String requestURI = request.getRequestURI();
+        return handlerMappingMap.get(requestURI);
+    }
+}
+```
+- 컨트롤러(Controller) -> 핸들러(Handler)
+  - 이전에는 컨트롤러를 직접 매핑해서 사용했다. 
+  - 그런데 이제는 어댑터를 사용하기 때문에, 컨트롤러 뿐만 아니라 어댑터가 지원하기만 하면, 어떤 것이라도 URL에 매핑해서 사용할 수 있다.
+  - 그래서 이름을 컨트롤러에서 더 넒은 범위의 핸들러로 변경했다. 
+- 매핑 정보의 값이 ControllerV3 , ControllerV4 같은 인터페이스에서 아무 값이나 받을 수 있는 Object 로 변경되었다.  
+
+- 내가 `/front-controller/v5/v3/members` 이와 같은 방식으로 요청을 했을 때
+- 우선 핸들러 매핑에 있는지 확인하고, 해당 핸들러를 가져온다 . `MemberListControllerV3()`
+- 그리고 이 핸들러를 처리할 수 있는 핸들러 어댑터를 조회한다.
+- 핸들러 어댑터를 통해 실제 컨트롤러를 호출하는 `handle` 작업이 이뤄진다.
+- 핸들러 어댑터는 ModelView를 반환한다.
+- 여기서 viewName을 가져와서, viewResolver를 호출하여, 뷰를 가져온다.
+- view에 model과 request, response를 담아서 렌더링한다.
+
+
