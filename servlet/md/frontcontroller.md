@@ -10,7 +10,7 @@
 - View로 이동하는 공통 로직도 다 넣어야 한다는 것
 
 
-프론트 컨트롤러를 등장 두둥
+- 프론트 컨트롤러를 등장 두둥
 ![front-controller.png](imgs/front-controller.png)
 
 #### 프론트 컨트롤러 패턴의 특징
@@ -390,6 +390,22 @@ public class FrontControllerServletV3 extends HttpServlet {
 - view에서 이제 render를 할 때, request에 model 데이터를 모두 담아서 보내야할 것이다.
 - 그래야 jsp에서 ${ }로 값을 받아서 쓸 테니.
 
+- createParamMap()
+  - HttpServletRequest에서 파라미터 정보를 꺼내서 Map으로 변환한다. 그리고 해당 Map( paramMap )을 컨트롤러에 전달하면서 호출한다.
+
+- 뷰 리졸버
+  - MyView view = viewResolver(viewName)
+  - 컨트롤러가 반환한 논리 뷰 이름을 실제 물리 뷰 경로로 변경한다. 
+  - 그리고 실제 물리 경로가 있는 MyView 객체를 반환한다.
+    - 논리 뷰 이름: members
+    - 물리 뷰 경로: /WEB-INF/views/members.jsp
+
+- view.render(mv.getModel(), request, response)
+  - 뷰 객체를 통해서 HTML 화면을 렌더링 한다.
+  - 뷰 객체의 render() 는 모델 정보도 함께 받는다.
+  - JSP는 request.getAttribute() 로 데이터를 조회하기 때문에, 모델의 데이터를 꺼내서 request.setAttribute() 로 담아둔다.
+  - JSP로 포워드 해서 JSP를 렌더링 한다.
+
 그래서 View는 다음과 같이 구현한다.
 ```java
 public class MyView {
@@ -417,4 +433,14 @@ public class MyView {
 - 결과적으로 프론트 컨트롤러가 할 일이 많아졌다.
 - 그런데 장점은 뭐냐? 실제 호출하는 컨트롤러가 굉장히 심플하다!
 - 자자, 다시 한번 구조를 상기하자.
-- ![frontcontrollerV3.png](imgs/frontcontrollerV3.png)
+![frontcontrollerV3.png](imgs/frontcontrollerV3.png)
+
+## 단순하고 실용적인 컨트롤러 - v4
+
+- 앞서 만든 v3 컨트롤러는 서블릿 종속성을 제거하고 뷰 경로의 중복을 제거하는 등, 잘 설계된 컨트롤러이다. 
+- 그런데 실제 컨트톨러 인터페이스를 구현하는 개발자 입장에서 보면, 항상 ModelView 객체를 생성하고 반환해야 하는 부분이 조금은 번거롭다.
+- 좋은 프레임워크는 아키텍처도 중요하지만, 그와 더불어 실제 개발하는 개발자가 단순하고 편리하게 사용할 수 있어야 한다. 소위 실용성이 있어야 한다.
+- 이번에는 v3를 조금 변경해서 실제 구현하는 개발자들이 매우 편리하게 개발할 수 있는 v4 버전을 개발해보자.
+
+![v4.png](imgs/v4.png)
+- ModelView를 반환하지 않고, ViewName만을 반환해보자!!
