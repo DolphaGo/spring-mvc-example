@@ -27,3 +27,5 @@ public class ModelView { // SpringMVC에는 비슷한 기능의 ModelAndView 라
         this.model = model;
     }
 }
+
+

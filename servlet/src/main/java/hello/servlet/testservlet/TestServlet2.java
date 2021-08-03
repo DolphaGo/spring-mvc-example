@@ -1,4 +1,4 @@
-package hello.servlet.test;
+package hello.servlet.testservlet;
 
 import java.io.IOException;
 
@@ -8,17 +8,17 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet(name = "testServlet", urlPatterns = "/test")
-public class TestServlet extends HttpServlet {
+@WebServlet(name = "testServlet2", urlPatterns = "/test2")
+public class TestServlet2 extends HttpServlet {
 
     @Override
     protected void service(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
-        System.out.println("Service 1 In = " + Thread.currentThread());
+        System.out.println("Service 2 In = " + Thread.currentThread());
         try {
-            Thread.currentThread().sleep(15000);
+            Thread.sleep(15000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        System.out.println("complete Test 1");
+        System.out.println("complete Test 2");
     }
 }
