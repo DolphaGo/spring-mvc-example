@@ -1,4 +1,4 @@
-# HandlerMApping & HandlerAdapter
+# HandlerMapping & HandlerAdapter
 
 ## HandlerMapping
 
