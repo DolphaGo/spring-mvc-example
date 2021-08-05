@@ -5,14 +5,21 @@
 </head>
 <body>
 성공
-<ul>
-    <li>
-        id = ${member.id}
-        username = ${member.username}
-        age = ${member.age}
-        <%-- property 접근법 : getAge같이 사용하지 말고 .property로 접근. JSP에서 제공하는 것임  --%>
-    </li>
-</ul>
+<table>
+    <thead>
+    <th>id</th>
+    <th>username</th>
+    <th>age</th>
+    </thead>
+    <tbody>
+    <tr>
+        <td>${member.id} </td>
+        <td>${member.username}</td>
+        <td>${member.age}</td>
+    </tr>
+    </tbody>
+</table>
+
 <a href="/index.html">메인</a>
 </body>
 </html>
