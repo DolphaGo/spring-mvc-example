@@ -87,5 +87,4 @@ public class RequestBodyJsonController {
     }
 
     // 클라이언트 요청의 Accept를 봐야한다. 이 Accept가 클라이언트 요청 응답을 위한 메세지 컨버터 선택에 영향을 주기 때문이다.
-
 }
