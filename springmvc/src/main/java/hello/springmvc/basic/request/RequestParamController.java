@@ -104,22 +104,22 @@ public class RequestParamController {
         return "ok";
     }
 
-//    @ResponseBody
-//    @RequestMapping("/model-attribute-v1-prev")
-//    public String modelAttributeV1_Prev(@RequestParam String username, @RequestParam int age) {
-//        HelloData helloData = new HelloData();
-//        helloData.setUsername(username);
-//        helloData.setAge(age);
-//
-//        log.info("username = {}, age = {}", helloData.getUsername(), helloData.getAge());
-//        log.info("helloData = {}", helloData);
-//
-//        return "ok";
-//    }
+    @ResponseBody
+    @RequestMapping("/model-attribute-v1-prev")
+    public String modelAttributeV1_Prev(@RequestParam String username, @RequestParam int age) {
+        HelloData helloData = new HelloData();
+        helloData.setUsername(username);
+        helloData.setAge(age);
+
+        log.info("username = {}, age = {}", helloData.getUsername(), helloData.getAge());
+        log.info("helloData = {}", helloData);
+
+        return "ok";
+    }
 
     /**
      * 보통은 위와 같은 과정을 통해 객체에 세팅을 한다.
-     *
+     * RequestParam으로 데이터를 받아서, 객체에 값 세팅을 하는 과정이다.
      * 이러한 과정을 한번에 해주는 것이 바로 @ModelAttribute이다.
      */
     @ResponseBody
