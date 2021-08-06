@@ -8,10 +8,12 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import hello.springmvc.basic.HelloData;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -97,10 +99,56 @@ public class RequestParamController {
      */
     @ResponseBody
     @RequestMapping("/request-param-map")
-    public String requestParamMap(@RequestParam Map<String, Object> paramMap){
+    public String requestParamMap(@RequestParam Map<String, Object> paramMap) {
         log.info("username = {}, age = {}", paramMap.get("username"), paramMap.get("age"));
         return "ok";
     }
 
+//    @ResponseBody
+//    @RequestMapping("/model-attribute-v1-prev")
+//    public String modelAttributeV1_Prev(@RequestParam String username, @RequestParam int age) {
+//        HelloData helloData = new HelloData();
+//        helloData.setUsername(username);
+//        helloData.setAge(age);
+//
+//        log.info("username = {}, age = {}", helloData.getUsername(), helloData.getAge());
+//        log.info("helloData = {}", helloData);
+//
+//        return "ok";
+//    }
 
+    /**
+     * 보통은 위와 같은 과정을 통해 객체에 세팅을 한다.
+     *
+     * 이러한 과정을 한번에 해주는 것이 바로 @ModelAttribute이다.
+     */
+    @ResponseBody
+    @RequestMapping("/model-attribute-v1")
+    public String modelAttributeV1(@ModelAttribute HelloData helloData) {
+        log.info("helloData = {}", helloData);
+        return "ok";
+    }
+    /**
+     * 어떻게 이런 과정이 되는 걸까? 마치 마법같다.
+     *
+     * 스프링 MVC는 @ModelAttribute 가 있으면 다음을 실행한다.
+     * 1. HelloData 객체를 생성한다.
+     * 2. 요청 파라미터의 이름으로 HelloData 객체의 프로퍼티를 찾는다.
+     * 3. 그리고 해당 프로퍼티의 setter를 호출해서 파라미터의 값을 입력(바인딩) 한다.
+     * 예) 파라미터 이름이 username 이면 setUsername() 메서드를 찾아서 호출하면서 값을 입력한다.
+     */
+
+    @ResponseBody
+    @RequestMapping("/model-attribute-v2")
+    public String modelAttributeV2(HelloData helloData) { // ModelAttribute 생략해도 됩니다.
+        log.info("helloData = {}", helloData);
+        return "ok";
+    }
+    /**
+     * @ModelAttribute 는 생략할 수 있다.
+     * 그런데 @RequestParam 도 생략할 수 있으니 혼란이 발생할 수 있다.
+     * 스프링은 해당 생략시 다음과 같은 규칙을 적용한다.
+     * String , int , Integer 같은 단순 타입 = @RequestParam 이 생략이 되었구나~
+     * 나머지 = @ModelAttribute (argument resolver 로 지정해둔 타입 외)
+     */
 }
