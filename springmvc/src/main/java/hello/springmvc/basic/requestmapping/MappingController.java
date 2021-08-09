@@ -129,6 +129,10 @@ public class MappingController {
     /**
      * consumes는 클라이언트가 서버에게 보내는 데이터 타입을 명시한다. - Content-Type
      * produces는 서버가 클라이언트에게 반환하는 데이터 타입을 명시한다. - Accept
+     *
+     * 내 의견을 덧붙이자면, Accept는 클라이언트가 받고싶은 목록을 Accept 헤더 필드에 넣어서 보내는 것이고,
+     * 서버측에서 이 Accept를 처리할 수 있는 핸들러 매핑이 있을 때, 이 핸들러 매핑이 동작하여 반환되는 것이다.
+     * 그래서 produces를 accept랑 매핑한 것이라고 이해하면 될 것 같다.
      */
 
 }
