@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import hello.itemservice.domain.item.Item;
 import hello.itemservice.domain.item.ItemRepository;
@@ -93,12 +94,35 @@ public class BasicItemController {
 //        itemRepository.save(item);
 //        return "basic/item";
 //    }
+
+//    @PostMapping("/add")
+//    public String addItemV5(Item item) {
+//        itemRepository.save(item);
+//        return "redirect:/basic/items/" + item.getId(); // 이건 그냥 숫자라 그냥 넘겼지만, 한글과 같은 경우엔 URL 인코딩을 해야만 한다.
+//        // 그런 방법을 정의할 수 있는 RedirectAttribute라는 것이 있다.
+//    }
+
+    /**
+     * 만약 저장이 되었으면 "저장이 되었습니다."라는 문구를 보여달라는 요구사항이 있다면 어떨까?
+     */
     @PostMapping("/add")
-    public String addItemV5(Item item) {
-        itemRepository.save(item);
-        return "redirect:/basic/items/" + item.getId(); // 이건 그냥 숫자라 그냥 넘겼지만, 한글과 같은 경우엔 URL 인코딩을 해야만 한다.
-        // 그런 방법을 정의할 수 있는 RedirectAttribute라는 것이 있다.
+    public String addItemV6(Item item, RedirectAttributes redirectAttributes) {
+        final Item savedItem = itemRepository.save(item);
+        redirectAttributes.addAttribute("itemId", savedItem.getId());
+        redirectAttributes.addAttribute("status", true);
+        return "redirect:/basic/items/{itemId}"; // redirectAttribute에 값이 들어간 itemId가 {pathVariable} 내에 세팅이 된다. 그리고 남은 파라미터인 status는 파라미터로 넘어가게 된다.
+        // result : http://localhost:8080/basic/items/3?status=true
     }
+
+    /**
+     * RedirectAttributes를 사용하면 URL인코딩도 해주고, pathVariable, QueryParameter까지 처리해준다.
+     */
+
+
+
+
+
+
 
     @GetMapping("/{itemId}/edit")
     public String editForm(@PathVariable Long itemId, Model model) {
