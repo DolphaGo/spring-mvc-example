@@ -79,10 +79,25 @@ public class BasicItemController {
 //        return "basic/item";
 //    }
 
+    /**
+     * 새로 고침이란, 마지막에 했던 행동을 다시 하는 것. 즉 POST 요청을 다시 보내는 것임
+     * 이를 해결하는 가장 간단한 방법은 redirect를 하는 것이다.
+     * POST REDIRECT GET => PRG 라고 합니다.
+     * 실무에서 많이 사용하는 방법임
+     * 웹 브라우저의 새로 고침은 마지막에 서버에 전송한 데이터를 다시 전송한다.
+     * 새로 고침 문제를 해결하려면 상품 저장 후에 뷰 템플릿으로 이동하는 것이 아니라, 상품 상세 화면으로 리다이렉트를 호출해주면 된다.
+     * 웹 브라우저는 실제 상품 상세 화면으로 다시 이동한다.
+     */
+//    @PostMapping("/add")
+//    public String addItemV4(Item item) { // ModelAttribute 자체를 생략할 수도 있다. (Item -> item을 model의 속성명으로 사용 model.addAttribute("여기에 item", ...);
+//        itemRepository.save(item);
+//        return "basic/item";
+//    }
     @PostMapping("/add")
-    public String addItemV4(Item item) { // ModelAttribute 자체를 생략할 수도 있다. (Item -> item을 model의 속성명으로 사용 model.addAttribute("여기에 item", ...);
+    public String addItemV5(Item item) {
         itemRepository.save(item);
-        return "basic/item";
+        return "redirect:/basic/items/" + item.getId(); // 이건 그냥 숫자라 그냥 넘겼지만, 한글과 같은 경우엔 URL 인코딩을 해야만 한다.
+        // 그런 방법을 정의할 수 있는 RedirectAttribute라는 것이 있다.
     }
 
     @GetMapping("/{itemId}/edit")
