@@ -1,0 +1,12 @@
+
+t
+java:S41442"^Update this method so that its implementation is not identical to "requestParamV3" on line 43.(Ğë‡
+t
+java:S4144L"^Update this method so that its implementation is not identical to "requestParamV3" on line 43.(§Ş¬²
+„
+java:S4144"aUpdate this method so that its implementation is not identical to "modelAttributeV1" on line 127.(ö¬îäüÿÿÿÿ8Œ»å²/
+o	java:S100m"NRename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ìš€äúÿÿÿÿ8¿ù¥ê²/
+l
+java:S1192s"ODefine a constant instead of duplicating this literal "helloData = {}" 3 times.(™Â©8Àù¥ê²/
+s
+java:S1192"XDefine a constant instead of duplicating this literal "username = {}, age = {}" 8 times.(¥Ôçîûÿÿÿÿ

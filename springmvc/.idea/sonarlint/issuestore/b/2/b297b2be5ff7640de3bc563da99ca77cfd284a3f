@@ -1,0 +1,8 @@
+
+€
+java:S4144"^Update this method so that its implementation is not identical to "responseViewV2" on line 20.(£ò½îùÿÿÿÿ8ù½úê²/
+o	java:S100"NRename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(£ò½îùÿÿÿÿ8ü½úê²/
+q
+java:S1192"ODefine a constant instead of duplicating this literal "response/hello" 3 times.(Â×¨£ùÿÿÿÿ8Â–úê²/
+}
+java:S1488"[Immediately return this expression instead of assigning it to the temporary variable "mav".(Â×¨£ùÿÿÿÿ8¼äíê²/
