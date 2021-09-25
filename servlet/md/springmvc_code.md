@@ -175,17 +175,18 @@ public class SpringMemberControllerV2 {
 @RequestMapping("/springmvc/v2/members")
 public class SpringMemberControllerV2 {}
 ```
+
 - 조합 결과 클래스 레벨 @RequestMapping("/springmvc/v2/members")
-- 메서드 레벨 @RequestMapping("/new-form") /springmvc/v2/members/new-form 
-- 메서드 레벨 @RequestMapping("/save") /springmvc/v2/members/save 
+- 메서드 레벨 @RequestMapping("/new-form") /springmvc/v2/members/new-form
+- 메서드 레벨 @RequestMapping("/save") /springmvc/v2/members/save
 - 메서드 레벨 @RequestMapping /springmvc/v2/members
 
 가 된다!!
 
+이걸 더 실용적인 컨트롤러로 바꿀 수는 없을까? Annotation 기반의 컨트롤러는 다양한 기능을 지원한다.
 
-이걸 더 실용적인 컨트롤러로 바꿀 수는 없을까?
-Annotation 기반의 컨트롤러는 다양한 기능을 지원한다.
 - 모델, HttpRequest의 Parameter, ModelAndView 대신 String으로 리턴해도 자동으로 View를 찾아준다.
+
 ```java
 @Controller
 @RequestMapping("/springmvc/v3/members")
@@ -224,6 +225,7 @@ public class SpringMemberControllerV3 {
 
 - 지금까지는 GET으로 오든, POST로 오든, PUT으로 오든, 경로만 맞으면 해당 요청이 동작하도록 했다.
 - HTTP Method를 추가해보자.
+
 ```java
 @Controller
 @RequestMapping("/springmvc/v3/members")

@@ -68,14 +68,16 @@ protected void render(ModelAndView mv,HttpServletRequest request,HttpServletResp
 ```
 
 ### SpringMVC 구조
+
 ![img.png](imgs/springmvc_architecture.png)
 
-
 ### 인터페이스
+
 - 스프링 MVC의 가장 큰 강점은 DispatcherServlet 코드의 변경 없이, 원하는 기능을 변경하거나 확장할 수 있다는 점.
 - 이 인터페이스들만 구현해서 DispatcherServlet에 등록하면 우리만의 컨트롤러를 만들어볼 수 있다.
 
 > 주요 인터페이스 목록
+
 - 핸들러 매핑: `org.springframework.web.servlet.HandlerMapping`
 - 핸들러 어댑터: `org.springframework.web.servlet.HandlerAdapter`
 - 뷰 리졸버: `org.springframework.web.servlet.ViewResolver`

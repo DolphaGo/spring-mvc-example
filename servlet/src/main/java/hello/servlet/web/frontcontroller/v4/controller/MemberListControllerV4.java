@@ -14,7 +14,7 @@ public class MemberListControllerV4 implements ControllerV4 {
     @Override
     public String process(final Map<String, String> paramMap, final Map<String, Object> model) {
         final List<Member> members = memberRepository.findAll();
-        model.put("members",members);
+        model.put("members", members);
         return "members";
     }
 }

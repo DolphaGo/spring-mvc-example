@@ -119,11 +119,6 @@ public class BasicItemController {
      */
 
 
-
-
-
-
-
     @GetMapping("/{itemId}/edit")
     public String editForm(@PathVariable Long itemId, Model model) {
         final Item item = itemRepository.findById(itemId);

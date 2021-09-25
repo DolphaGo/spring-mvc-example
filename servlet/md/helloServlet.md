@@ -3,9 +3,9 @@
 - `@WebServlet` : 서블릿 애노테이션
     - name : 서블릿 이름
     - urlPatterns : URL 매핑
-    
 
 HTTP 요청을 통해 매핑된 URL이 호출되면, 서블릿 컨테이너는 다음 메서드를 실행한다.
+
 ```java
 @Override
 protected void service(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
@@ -14,6 +14,7 @@ protected void service(final HttpServletRequest req, final HttpServletResponse r
 ```
 
 다음 정보를 보면, 요청 정보를 굉장히 자세히 볼 수 있다.
+
 ```
 logging.level.org.apache.coyote.http11=debug
 ```
@@ -41,6 +42,7 @@ request = org.apache.catalina.connector.RequestFacade@1c74bafa
 response = org.apache.catalina.connector.ResponseFacade@7fa2c329
 username = 김
 ```
+
 그러나, 운영 서버에 넣을 때는 성능 저하가 발생할 수 있다. 개발할 때만 적용하자.
 
 > 참고
@@ -51,6 +53,7 @@ HTTP 응답에서 Content-Length는 웹 애플리케이션 서버가 자동으�
 ---
 
 HttpServletRequest 진입 지점 정보 출력
+
 ```java
 private void printStartLine(HttpServletRequest request) {
     System.out.println("--- REQUEST-LINE - start ---");
@@ -71,6 +74,7 @@ private void printStartLine(HttpServletRequest request) {
 ```
 
 Request Header의 모든 정보 출력
+
 ```java
 //Header 모든 정보
 private void printHeaders(HttpServletRequest request) {
@@ -90,6 +94,7 @@ private void printHeaders(HttpServletRequest request) {
 ```
 
 Request Header의 편리한 출력
+
 ```java
 //Header 편리한 조회
 private void printHeaderUtils(HttpServletRequest request) {
@@ -128,6 +133,7 @@ private void printHeaderUtils(HttpServletRequest request) {
 ```
 
 기타 정보 출력
+
 ```java
 //기타 정보
 private void printEtc(HttpServletRequest request) {
@@ -147,6 +153,7 @@ private void printEtc(HttpServletRequest request) {
 ```
 
 전체 코드
+
 ```java
 @WebServlet(name = "requestHeaderServlet", urlPatterns = "/request-header")
 public class RequestHeaderServlet extends HttpServlet {

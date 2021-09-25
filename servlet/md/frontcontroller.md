@@ -611,14 +611,15 @@ public interface MyHandlerAdapter {
 ````
 
 `boolean supports(Object handler)`
+
 - handler는 컨트롤러를 말한다.
 - 어댑터가 해당 컨트롤러를 처리할 수 있는지 판단하는 메서드다.
 
 `ModelView handle(HttpServletRequest request, HttpServletResponse response, Object handler)`
+
 - 어댑터는 실제 컨트롤러를 호출하고, 그 결과로 ModelView를 반환해야 한다.
 - 실제 컨트롤러가 ModelView를 반환하지 못하면, 어댑터가 ModelView를 직접 생성해서라도 반환해야 한다.
 - 이전에는 프론트 컨트롤러가 실제 컨트롤러를 호출했지만 이제는 이 어댑터를 통해서 실제 컨트롤러가 호출된다.
-
 
 > 우선, `front-controller/v5/*` 로 들어오는 요청을 한 번 어댑터로 처리해보자.
 
@@ -640,6 +641,7 @@ public interface MyHandlerAdapter {
 이제 어댑터를 구현해보자.
 
 V3 어댑터
+
 ```java
 public class ControllerV3HandlerAdapter implements MyHandlerAdapter {
     @Override
@@ -666,11 +668,12 @@ public class ControllerV3HandlerAdapter implements MyHandlerAdapter {
 ```
 
 - supports
-  - 일단 지원하기 위해서는 `ControllerV3` 인터페이스 타입인지를 확인해야한다.
+    - 일단 지원하기 위해서는 `ControllerV3` 인터페이스 타입인지를 확인해야한다.
 
 - handle
-  - supports에 통과된 핸들러는 ControllerV3 타입으로 캐스팅을 한다.
-  - 기존 V3는 request에 딸려있는 파라미터를 다 받아온 paramMap을 넘겨서, ModelView 객체를 만들어서, ModelView 내의 model에 데이터를 세팅하고, ModelView를 반환하면 이를 받아서 렌더하는 방식이였다.
+    - supports에 통과된 핸들러는 ControllerV3 타입으로 캐스팅을 한다.
+    - 기존 V3는 request에 딸려있는 파라미터를 다 받아온 paramMap을 넘겨서, ModelView 객체를 만들어서, ModelView 내의 model에 데이터를 세팅하고, ModelView를 반환하면 이를 받아서 렌더하는 방식이였다.
+
 ```java
 public class MemberListControllerV3 implements ControllerV3 {
     private MemberRepository memberRepository = MemberRepository.getInstance();
@@ -684,10 +687,12 @@ public class MemberListControllerV3 implements ControllerV3 {
     }
 }
 ```
-  - 현재 어댑터의 리턴을 ModelView로 했으므로, 굉장히 간단하게 모델에 데이터를 담는 방식이다.
+
+- 현재 어댑터의 리턴을 ModelView로 했으므로, 굉장히 간단하게 모델에 데이터를 담는 방식이다.
 
 
 - V5 컨트롤러는 어떻게 생겨먹으면 될까
+
 ```java
 @WebServlet(name = "frontControllerServletV5", urlPatterns = "/front-controller/v5/*")
 public class FrontControllerServletV5 extends HttpServlet {
@@ -749,11 +754,12 @@ public class FrontControllerServletV5 extends HttpServlet {
     }
 }
 ```
+
 - 컨트롤러(Controller) -> 핸들러(Handler)
-  - 이전에는 컨트롤러를 직접 매핑해서 사용했다. 
-  - 그런데 이제는 어댑터를 사용하기 때문에, 컨트롤러 뿐만 아니라 어댑터가 지원하기만 하면, 어떤 것이라도 URL에 매핑해서 사용할 수 있다.
-  - 그래서 이름을 컨트롤러에서 더 넒은 범위의 핸들러로 변경했다. 
-- 매핑 정보의 값이 ControllerV3 , ControllerV4 같은 인터페이스에서 아무 값이나 받을 수 있는 Object 로 변경되었다.  
+    - 이전에는 컨트롤러를 직접 매핑해서 사용했다.
+    - 그런데 이제는 어댑터를 사용하기 때문에, 컨트롤러 뿐만 아니라 어댑터가 지원하기만 하면, 어떤 것이라도 URL에 매핑해서 사용할 수 있다.
+    - 그래서 이름을 컨트롤러에서 더 넒은 범위의 핸들러로 변경했다.
+- 매핑 정보의 값이 ControllerV3 , ControllerV4 같은 인터페이스에서 아무 값이나 받을 수 있는 Object 로 변경되었다.
 
 - 내가 `/front-controller/v5/v3/members` 이와 같은 방식으로 요청을 했을 때
 - 우선 핸들러 매핑에 있는지 확인하고, 해당 핸들러를 가져온다 . `MemberListControllerV3()`
