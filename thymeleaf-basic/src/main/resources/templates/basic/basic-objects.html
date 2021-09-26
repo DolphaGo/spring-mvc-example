@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<body>
+
+<h1>식 기본 객체 (Expression Basic Objects)</h1>
+<ul>
+  <li>request = <span th:text="${#request}"></span></li>
+  <li>response = <span th:text="${#response}"></span></li>
+  <li>session = <span th:text="${#session}"></span></li>
+  <li>servletContext = <span th:text="${#servletContext}"></span></li>
+  <li>locale = <span th:text="${#locale}"></span></li>
+</ul>
+
+<h1>편의 객체</h1>
+<ul>
+  <span>파라미터를 받아올 때 request.getParameter("paramData") 처럼 파라미터를 불편하게 꺼내오는 것 대신 다음과 같이 사용할 수 있다.</span>
+  <li>Request Parameter = <span th:text="${param.paramData}"></span></li>
+
+  <span>Session 객체에 담은 데이터를 바로 꺼내쓰면 된다.</span>
+  <li>session = <span th:text="${session.sessionData}"></span></li>
+  <li>spring bean 에 직접 접근하는 것도 제공한다 = <span th:text="${@helloBean.hello('Spring!')}"></span></li>
+</ul>
+
+</body>
+</html>
