@@ -76,9 +76,16 @@ public class BasicController {
     }
 
     @GetMapping("/date")
-    public String date(Model model){
+    public String date(Model model) {
         model.addAttribute("localDateTime", LocalDateTime.now());
         return "basic/date";
+    }
+
+    @GetMapping("/link")
+    public String link(Model model) {
+        model.addAttribute("param1", "data1");
+        model.addAttribute("param2", "data2");
+        return "basic/link";
     }
 
     @Data
