@@ -51,9 +51,25 @@ public class ValidationItemControllerV2 {
     /**
      * @param bindingResult 순서가 중요하다.
      * ModelAttribute Item item 다음에 와야만 한다.(item에 대한 bindResult를 의미함)
+     *
+     * bindingResult가 있을 때는 일단 컨트롤러가 호출이 된다.
+     *
+     * @ModelAttribute에 바인딩 시 타입 에러가 발생한다면?(수량에 qqq라는 값이 들어간다거나)
+     * bindingResult가 없으면 -> 400오류가 발생하면서 White Label Page로 너어감
+     * bindingResult가 있으면 -> 오류정보(FieldError)를 bindResult에 담아서 컨트롤러를 정상 호출한다.
+     *
+     * BindingResult에 검증 오류를 적용하는 방법
+     *
+     * 1. @ModelAttribute 객체에 타입 오류 등으로 바인딩이 실패하는 경우 스프링이 FieldError를 생성해서 BindingResult에 넣어준다.
+     * 2. 개발자가 직접 넣어준다.
+     * 3. Validator 사용
+     *
+     * 따라서 bindResult는 검증할 대상 바로 다음에 와야만 한다. 순서가 중요하다.
+     * 예를 들어서 @ModelAttribute Item item 에 대해서 item에 대해 검증하고 싶다면 바로 다음에 BindResult가 와야만 한다.
+     * BindResult는 Model에 자동으로 포함된다.
      */
     @PostMapping("/add")
-    public String addItemV1(@ModelAttribute Item item, BindingResult bindingResult, RedirectAttributes redirectAttributes, Model model) {
+    public String addItemV1(@ModelAttribute Item item, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
 
         // 검증 로직
         if (!StringUtils.hasText(item.getItemName())) {
