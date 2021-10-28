@@ -107,6 +107,52 @@ public class ValidationItemControllerV2 {
         return "redirect:/validation/v2/items/{itemId}";
     }
 
+    /**
+     * rejectedValue로 인해 클라이언트에서 검증에 위반되는 값을 입력해도, 에러 메세지와 동시에 클라이언트 쪽에 값이 지워지지 않는다.
+     */
+//    @PostMapping("/add")
+    public String addItemV2(@ModelAttribute Item item, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+
+        // 검증 로직
+        if (!StringUtils.hasText(item.getItemName())) {
+//            bindingResult.addError(new FieldError("item", "itemName", "상품 이름은 필수입니다."));
+            // binding 자체는 성공했으므로 false이다. (필드와 맞게 데이터가 안넘어왔냐?는 의미임)
+            bindingResult.addError(new FieldError("item", "itemName", item.getItemName(), false, null, null, "상품 이름은 필수입니다."));
+        }
+
+        if (item.getPrice() == null || item.getPrice() < 1000 || item.getPrice() > 1000000) {
+//            bindingResult.addError(new FieldError("item", "price", "가격은 1,000 ~ 1,000,000 까지만 허용합니다."));
+            bindingResult.addError(new FieldError("item", "price", item.getPrice(), false, null, null, "가격은 1,000 ~ 1,000,000 까지만 허용합니다."));
+        }
+
+        if (item.getQuantity() == null || item.getQuantity() > 9999 || item.getQuantity() <= 0) {
+//            bindingResult.addError(new FieldError("item", "quantity", "수량은 1개이상, 최대 9,999까지 허용합니다."));
+            bindingResult.addError(new FieldError("item", "quantity", item.getQuantity(), false, null, null, "수량은 1개이상, 최대 9,999까지 허용합니다."));
+        }
+
+        // 특정 필드가 아닌 복합 룰 검증
+        if (item.getPrice() != null && item.getQuantity() != null) {
+            final int resultPrice = item.getPrice() * item.getQuantity();
+            if (resultPrice < 10000) {
+                bindingResult.addError(new ObjectError("item", null, null, "가격 * 수량의 합은 10,000원 이상이어야 합니다. 현재 값 = " + resultPrice));
+            }
+        }
+
+        // 검증에 실패하면 다시 입력 폼으로
+        if (bindingResult.hasErrors()) {
+            log.info("errors = {}", bindingResult);
+            // bindingResult는 자동으로 view에 담아갑니다. 그래서 따로 modelAttribute로 담지 않아도 됩니다.
+            // 스프링에서 BindingResult가 기본적으로 되어있다는 것이 그런 것들을 포함하고 있는 의미이기 때문입니다.
+            return "validation/v2/addForm";
+        }
+
+        // 성공 로직
+        Item savedItem = itemRepository.save(item);
+        redirectAttributes.addAttribute("itemId", savedItem.getId());
+        redirectAttributes.addAttribute("status", true);
+        return "redirect:/validation/v2/items/{itemId}";
+    }
+
     @GetMapping("/{itemId}/edit")
     public String editForm(@PathVariable Long itemId, Model model) {
         Item item = itemRepository.findById(itemId);
